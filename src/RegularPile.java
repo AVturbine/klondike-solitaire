@@ -6,8 +6,10 @@ import java.util.List;
 
 public class RegularPile extends Pile {	
 	
-	public RegularPile() {
+	public RegularPile(int x, int y) {
 		cards = new ArrayList<Card>();
+		this.x = x;
+		this.y = y;
 	}
 	
 	public void updateCardFaceStatus() {
@@ -43,7 +45,7 @@ public class RegularPile extends Pile {
 
 	@Override
 	public int getIndex(int x, int y) {
-		if ()
+		
 		return 0;
 	}
 
