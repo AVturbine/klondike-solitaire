@@ -4,13 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegularPile extends Pile {
-	
-	private List<Card> cards;
-	private static final int CARD_WIDTH = 73;
-	private static final int CARD_HEIGHT = 97;
-	private Dimension boundingBox = new Dimension (CARD_WIDTH, CARD_HEIGHT);
-	
+public class RegularPile extends Pile {	
 	
 	public RegularPile() {
 		cards = new ArrayList<Card>();
@@ -25,10 +19,6 @@ public class RegularPile extends Pile {
 			}
 		}
 	}
-	
-	public int size() {return cards.size();}
-	public boolean empty() {return cards.size()==0?true:false;}
-	public Dimension getBoundingBox() {return boundingBox;}
 	
 	@Override
 	public void draw(Graphics g, int x, int y, int size) {
@@ -48,21 +38,13 @@ public class RegularPile extends Pile {
 			}
 		}
 		boundingBox.setSize(boundingBox.getWidth(), y-originalY+CARD_HEIGHT);
+		System.out.println(this.getBoundingBox());
 	}
 
 	@Override
-	public Card[] pickUp(int index) {
-		List<Card> temp = cards.subList(index, cards.size());
-		this.cards = cards.subList(0, index);
-		return temp.toArray(new Card[temp.size()]);
+	public int getIndex(int x, int y) {
+		if ()
+		return 0;
 	}
-	
-	@Override
-	public void addCard(Card[] incoming) {
-		for (int i = 0; i < incoming.length; i++) {
-			cards.add(incoming[i]);
-		}
-	}
-
 
 }
