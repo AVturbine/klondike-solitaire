@@ -38,13 +38,20 @@ public class RegularPile extends Pile {
 			}
 		}
 		boundingBox.setSize(boundingBox.getWidth(), y-originalY+CARD_HEIGHT);
-		System.out.println(this.getBoundingBox());
+		Log.log(this.getBoundingBox().toString(), Log.VERBOSE);
 	}
 
 	@Override
 	public int getIndex(int x, int y) {
-		if ()
+		
 		return 0;
+	}
+
+	@Override
+	public boolean canStack(Card c) {
+		if(cards.size() == 0) return c.getRank() == 13;
+		Card lastCard = cards.get(cards.size() - 1);
+		return (c.getRank() + 1 == lastCard.getRank() && c.getColor() != lastCard.getColor());
 	}
 
 }

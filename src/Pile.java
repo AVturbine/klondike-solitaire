@@ -19,6 +19,7 @@ public abstract class Pile {
 
 	public abstract void draw(Graphics g, int x, int y, int size);
 	public abstract int getIndex(int x, int y);
+	public abstract boolean canStack(Card c);
 	
 	public Card[] pickUp(int index) {
 		List<Card> temp = cards.subList(index, cards.size());
@@ -26,6 +27,7 @@ public abstract class Pile {
 		return temp.toArray(new Card[temp.size()]);
 	}
 	public void addCard(Card[] incoming) {
+		if(!canStack(incoming[0])) return;
 		for (int i = 0; i < incoming.length; i++) {
 			cards.add(incoming[i]);
 		}
