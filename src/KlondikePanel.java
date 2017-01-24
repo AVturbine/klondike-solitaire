@@ -16,16 +16,16 @@ public class KlondikePanel extends JPanel {
 		this.setBackground(backgroundColor);
 		deck = new Deck();
 		for (int i = 0; i < 8; i++) {
-			pileArray[i] = new RegularPile();
+			pileArray[i] = new RegularPile(15, 15);
 			for (int k = 0; k < i+1; k++) {
 				pileArray[i].addCard(deck.deal());
 			}
 			pileArray[i].updateCardFaceStatus();
 		}
 		pileArray[0].addCard(pileArray[3].pickUp(0));
-		pileArray[3].updateCardFaceStatus();
-		
+		pileArray[3].updateCardFaceStatus();		
 	}
+	
 	
 	
 	public void paintComponent(Graphics g) {
