@@ -8,35 +8,26 @@ public class KlondikePanel extends JPanel {
 	private Dimension dim = new Dimension(800, 600);
 	private Color backgroundColor = new Color(125,125,125);
 	public int count = 0;
+	Pile pile = new RegularPile(50, 50);
+	Pile pile2 = new FoundationPile(150, 300);
 	Deck deck;
-	RegularPile[] pileArray = new RegularPile[8];
 	
 	public KlondikePanel() {
 		this.setPreferredSize(dim);
 		this.setBackground(backgroundColor);
-		deck = new Deck();
-		for (int i = 0; i < 8; i++) {
-			pileArray[i] = new RegularPile(15, 15);
-			for (int k = 0; k < i+1; k++) {
-				pileArray[i].addCard(deck.deal());
-			}
-			pileArray[i].updateCardFaceStatus();
-		}
-		pileArray[0].addCard(pileArray[3].pickUp(0));
-		pileArray[3].updateCardFaceStatus();		
+		deck = new Deck(400, 400);
+				
 	}
 	
 	
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		int x = 10;
-		for (Pile p : pileArray) {
-			p.draw(g, x, 50, 1);
-			x+=80;
-		}
+		pile.draw(g, 1);
+		pile2.draw(g, 1);
+		deck.draw(g, 1);
 		count++;
-		System.out.println("paintComponent has executed " + count + " times");
+		Log.log("paintComponent has executed " + count + " times", Log.VERBOSE);
 	}
 	
 }

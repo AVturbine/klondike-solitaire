@@ -61,7 +61,7 @@ public class Card implements Comparable<Card> {
 			}
 		} else {
 			g.drawImage(back, x, y, width, height, null);
-			System.out.println("drew back");
+			Log.log("drew back", Log.VERBOSE);
 		}
 	}
 	/**
@@ -83,9 +83,9 @@ public class Card implements Comparable<Card> {
 		try {
 			URL url = getClass().getResource("cards/" + fileName + ".GIF");
 			front = ImageIO.read(url);
-			System.out.println("Successfully loaded front img "+ fileName);
+			Log.log("Successfully loaded front img "+ fileName, Log.VERBOSE);
 		} catch (IOException e) {
-			System.out.println("Problem opening the front resource: filename is " + fileName);
+			Log.log("Problem opening the front resource: filename is " + fileName, Log.VERBOSE);
 			e.printStackTrace();
 		}
 		
@@ -94,20 +94,20 @@ public class Card implements Comparable<Card> {
 		try {
 			URL url = getClass().getResource("cards/" + fileName + ".GIF");
 			frontSelected = ImageIO.read(url);
-			System.out.println("Successfully loaded frontS img "+ fileName);
+			Log.log("Successfully loaded frontS img "+ fileName, Log.VERBOSE);
 
 		} catch (IOException e) {
-			System.out.println("Problem opening the frontSelected resource: filename is " + fileName);
+			Log.log("Problem opening the frontSelected resource: filename is " + fileName, Log.VERBOSE);
 			e.printStackTrace();
 		}
 		
 		try {
 			URL url = getClass().getResource("cards/back1.GIF");
 			back = ImageIO.read(url);
-			System.out.println("Successfully loaded back img back1.GIF");
+			Log.log("Successfully loaded back img back1.GIF", Log.VERBOSE);
 
 		} catch (IOException e) {
-			System.out.println("Problem opening the back resource: filename is back1.GIF");
+			Log.log("Problem opening the back resource: filename is back1.GIF", Log.VERBOSE);
 			e.printStackTrace();
 		}
 	}

@@ -26,7 +26,7 @@ public class RegularPile extends Pile {
 	}
 	
 	@Override
-	public void draw(Graphics g, int x, int y, int size) {
+	public void draw(Graphics g, int size) {
 		int originalY = y;
 		if (empty()) {
 			g.setColor(new Color(200, 200, 200));
@@ -43,14 +43,16 @@ public class RegularPile extends Pile {
 			}
 		}
 		boundingBox.setSize(boundingBox.getWidth(), y-originalY+CARD_HEIGHT);
-		System.out.println(this.getBoundingBox());
+		Log.log(this.getBoundingBox().toString(), Log.VERBOSE);
 	}
 	
 	/*
-	 * Returns index of card at click location (relative to bounding box), -1 if click is outside the bounding box
+	 * Returns index of card at click location, -1 if click is outside the bounding box
 	 */
 	@Override
 	public int getIndex(int x, int y) { 
+		x = this.x-x;
+		y = this.y-y;
 		if (!(x < 0 || x > boundingBox.getHeight() || y < 0 || y > boundingBox.getWidth())) { // determines if click is valid
 			int yMod = 0;
 			int previousYMod = 0;

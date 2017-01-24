@@ -1,5 +1,6 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public abstract class Pile {
@@ -17,7 +18,7 @@ public abstract class Pile {
 	
 	public int size() {return cards.size();}
 
-	public abstract void draw(Graphics g, int x, int y, int size);
+	public abstract void draw(Graphics g, int size);
 	public abstract int getIndex(int x, int y);
 	
 	public Card[] pickUp(int index) {
