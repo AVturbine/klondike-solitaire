@@ -22,14 +22,25 @@ public abstract class Pile {
 	public abstract boolean canStack(Card c);
 	
 	
-	public Card getCard(int i) { return cards.get(i); }
+	public Card getCard(int i) { 
+		if (i < cards.size()) return cards.get(i); 
+		Log.error("Out of pile bounds");
+		return null;
+	}
 	public int getNumCards() { return cards.size(); }
 	public Pile pickUp(int index) {
 		List<Card> temp = cards.subList(index, cards.size());
 		this.cards = cards.subList(0, index);
 		return new MovePile(temp);
 	}
+	public boolean add(Pile incoming) {
+		for (int i = 0; i < incoming.getNumCards(); i++) {
+			cards.add(incoming.getCard(i));
+		}
+		return true;
+	}
 	public boolean addCard(Pile incoming) {
+		if(incoming.getNumCards() < 1) return false;
 		if(!canStack(incoming.getCard(0))) return false;
 		for (int i = 0; i < incoming.getNumCards(); i++) {
 			cards.add(incoming.getCard(i));

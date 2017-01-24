@@ -29,4 +29,10 @@ public class FoundationPile extends Pile {
 		return -1;
 	}
 
+	@Override
+	public boolean canStack(Card c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

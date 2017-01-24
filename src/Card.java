@@ -43,7 +43,7 @@ public class Card implements Comparable<Card> {
 	public void setFaceUp(boolean faceUp) {this.faceUp = faceUp;}
 	public void setSelected(boolean selected) {this.selected = selected;}
 	
-	public boolean matches(Card otherCard) {
+	public boolean equals(Card otherCard) {
 		if (this.getSuit().equals(otherCard.getSuit()) && this.getRank()== otherCard.getRank()) return true;
 		else return false;
 	}

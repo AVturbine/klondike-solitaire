@@ -69,7 +69,6 @@ public class RegularPile extends Pile {
 		}
 		return -1;
 	} 
-	@Override
 	public boolean canStack(Card c) {
 		if(cards.size() == 0) return c.getRank() == 13;
 		Card lastCard = cards.get(cards.size() - 1);

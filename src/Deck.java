@@ -9,6 +9,7 @@ public class Deck {
 	public Deck() {
 		String[] suits = {"D", "H", "C", "S"};
 		cards = new ArrayList<Card>();
+
 		
 		for (String s: suits) {
 			for (int i = 1; i<14; i++) {
@@ -16,6 +17,7 @@ public class Deck {
 				size++;
 			}
 		}
+		new MovePile(cards.get(1));
 		System.out.println(size);
 		this.shuffle();
 	}
@@ -24,14 +26,14 @@ public class Deck {
 		return this.size == 0 ? true : false;
 	}
 	
-	public Card[] deal() {
+	public Pile deal() {
 		size--;
-		return new Card[] {cards.remove(size)};
+		return new MovePile(cards.remove(size));
 	}
 	
-	public Card[] deal(int num) {
+	public Pile deal(int num) {
 		int firstIndex = size - num;
-		return (Card[])(cards.subList(firstIndex, size).toArray());
+		return new MovePile(cards.subList(firstIndex, size));
 	}
 	
 	public int size() {return size;}
