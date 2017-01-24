@@ -3,7 +3,7 @@ import java.awt.Graphics;
 import java.util.List;
 
 public abstract class Pile {
-	List<Card> cards;
+	protected List<Card> cards;
 	
 	int x; int y;
 	
@@ -21,16 +21,20 @@ public abstract class Pile {
 	public abstract int getIndex(int x, int y);
 	public abstract boolean canStack(Card c);
 	
-	public Card[] pickUp(int index) {
+	
+	public Card getCard(int i) { return cards.get(i); }
+	public int getNumCards() { return cards.size(); }
+	public Pile pickUp(int index) {
 		List<Card> temp = cards.subList(index, cards.size());
 		this.cards = cards.subList(0, index);
-		return temp.toArray(new Card[temp.size()]);
+		return new MovePile(temp);
 	}
-	public void addCard(Card[] incoming) {
-		if(!canStack(incoming[0])) return;
-		for (int i = 0; i < incoming.length; i++) {
-			cards.add(incoming[i]);
+	public boolean addCard(Pile incoming) {
+		if(!canStack(incoming.getCard(0))) return false;
+		for (int i = 0; i < incoming.getNumCards(); i++) {
+			cards.add(incoming.getCard(i));
 		}
+		return true;
 	}
 	
 }
