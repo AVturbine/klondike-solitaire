@@ -1,6 +1,10 @@
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
@@ -22,7 +26,42 @@ public class KlondikePanel extends JPanel {
 			}
 			pileArray[i].updateCardFaceStatus();
 		}
-		pileArray[3].updateCardFaceStatus();		
+		pileArray[3].updateCardFaceStatus();
+		this.addMouseListener(new MouseListener () {
+
+			@Override
+			public void mouseClicked(MouseEvent m) {
+				for(Pile p: pileArray) {
+					if (p.getIndex(m.getX(), m.getY()) != -1) {
+						System.out.println(p.getIndex(m.getX(), m.getY()));
+					}
+				}
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+				
+		});
 	}
 	
 	
@@ -37,5 +76,7 @@ public class KlondikePanel extends JPanel {
 		count++;
 		System.out.println("paintComponent has executed " + count + " times");
 	}
+
+
 	
 }

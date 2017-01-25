@@ -50,7 +50,7 @@ public class RegularPile extends Pile {
 	 * Returns index of card at click location (relative to bounding box), -1 if click is outside the bounding box
 	 */
 	public int getIndex(int x, int y) { 
-		if (!(x < 0 || x > boundingBox.getHeight() || y < 0 || y > boundingBox.getWidth())) { // determines if click is valid
+		if (!(x < this.x || x > boundingBox.getHeight() + this.x || y < this.y || y > boundingBox.getWidth() + this.y)) { // determines if click is valid
 			int yMod = 0;
 			int previousYMod = 0;
 			for (int i = 0; i < cards.size(); i++) {
@@ -58,7 +58,7 @@ public class RegularPile extends Pile {
 				if (c.getFaceUp()) yMod+=20;
 				else yMod+=10;
 				if (i != cards.size()-1) { // if we got to the last card and y is valid but still not found, just go with the last index
-					if(previousYMod <=y && yMod >= y) {
+					if(previousYMod <= y && yMod >= y) {
 						return i;
 					}
 				} else {
