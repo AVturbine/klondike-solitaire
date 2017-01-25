@@ -64,6 +64,6 @@ public class MovePile extends RegularPile implements MouseListener, MouseMotionL
 	public void mouseMoved(MouseEvent arg0) {
 		x = arg0.getX();
 		y = arg0.getY();
-		KlondikeGame.kg.k.repaint();
+		KlondikeGame.kg.repaint();
 	}
 }

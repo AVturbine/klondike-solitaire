@@ -18,11 +18,10 @@ public class KlondikePanel extends JPanel {
 		for (int i = 0; i < 8; i++) {
 			pileArray[i] = new RegularPile(15, 15);
 			for (int k = 0; k < i+1; k++) {
-				pileArray[i].addCard(deck.deal());
+				pileArray[i].add(deck.deal());
 			}
 			pileArray[i].updateCardFaceStatus();
 		}
-		pileArray[0].addCard(pileArray[3].pickUp(0));
 		pileArray[3].updateCardFaceStatus();		
 	}
 	
