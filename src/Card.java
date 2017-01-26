@@ -1,5 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
@@ -12,9 +13,9 @@ public class Card implements Comparable<Card> {
 	private boolean faceUp;
 	private boolean color; //red is true, black is false
 	private boolean selected;
-	private Image front;
-	private Image back;
-	private Image frontSelected;
+	private BufferedImage front;
+	private BufferedImage back;
+	private BufferedImage frontSelected;
 	
 	private static int ORIGINAL_SIZE_X = 73;
 	private static int ORIGINAL_SIZE_Y = 97;
@@ -43,7 +44,7 @@ public class Card implements Comparable<Card> {
 	public void setFaceUp(boolean faceUp) {this.faceUp = faceUp;}
 	public void setSelected(boolean selected) {this.selected = selected;}
 	
-	public boolean matches(Card otherCard) {
+	public boolean equals(Card otherCard) {
 		if (this.getSuit().equals(otherCard.getSuit()) && this.getRank()== otherCard.getRank()) return true;
 		else return false;
 	}

@@ -2,7 +2,7 @@
 public class Log {
 	public static final int QUIET = 0, ERRORS_ONLY = 1, NORMAL = 2, VERBOSE = 3;
 	public static final int ERROR = 1, SHOWSTOPPER = 0;
-	public static final int LOG_STATE = NORMAL;
+	public static final int LOG_STATE = VERBOSE;
 	
 	public static void log(String message, int importance) {
 			if(importance <= LOG_STATE) {

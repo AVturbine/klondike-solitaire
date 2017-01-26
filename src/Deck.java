@@ -10,23 +10,27 @@ public class Deck extends Pile{
 		this.y = y;
 		String[] suits = {"D", "H", "C", "S"};
 		cards = new ArrayList<Card>();
-		
-//		for (String s: suits) {
-//			for (int i = 1; i<14; i++) {
-//				cards.add(new Card(s, i, false));
-//			}
-//		}
+
+		for (String s: suits) {
+		for (int i = 1; i<14; i++) {
+			cards.add(new Card(s, i, false));
+		}
+		}
 		Log.log(Integer.toString(cards.size()), Log.VERBOSE);
 		this.shuffle();
 	}
 	
-	public Card[] deal() {
-		return new Card[] {cards.remove(cards.size())};
+	public boolean isEmpty() {
+		return this.cards.size() == 0 ? true : false;
 	}
 	
-	public Card[] deal(int num) {
+	public Pile deal() {
+		return new MovePile(cards.remove(cards.size()-1));
+	}
+	
+	public Pile deal(int num) {
 		int firstIndex = cards.size() - num;
-		return (Card[])(cards.subList(firstIndex, cards.size()).toArray());
+		return new MovePile(cards.subList(firstIndex, cards.size()));
 	}
 	
 	public void shuffle() {
@@ -65,6 +69,11 @@ public class Deck extends Pile{
 	@Override
 	public int getIndex(int x, int y) { // deck is not clickable per se?
 		return -1;
+	}
+
+	@Override
+	public boolean canStack(Card c) {
+		return false;
 	}
 	
 }

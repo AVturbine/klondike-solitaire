@@ -37,4 +37,10 @@ public class DrawPile extends Pile {
 		return 0;
 	}
 
+	@Override
+	public boolean canStack(Card c) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

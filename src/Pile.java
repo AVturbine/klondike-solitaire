@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 public abstract class Pile {
-	List<Card> cards;
+	protected List<Card> cards;
 	
 	int x; int y;
 	
@@ -20,16 +20,33 @@ public abstract class Pile {
 
 	public abstract void draw(Graphics g, int size);
 	public abstract int getIndex(int x, int y);
+	public abstract boolean canStack(Card c);
 	
-	public Card[] pickUp(int index) {
+	
+	public Card getCard(int i) { 
+		if (i < cards.size()) return cards.get(i); 
+		Log.error("Out of pile bounds");
+		return null;
+	}
+	public int getNumCards() { return cards.size(); }
+	public Pile pickUp(int index) {
 		List<Card> temp = cards.subList(index, cards.size());
 		this.cards = cards.subList(0, index);
-		return temp.toArray(new Card[temp.size()]);
+		return new MovePile(temp);
 	}
-	public void addCard(Card[] incoming) {
-		for (int i = 0; i < incoming.length; i++) {
-			cards.add(incoming[i]);
+	public boolean add(Pile incoming) {
+		for (int i = 0; i < incoming.getNumCards(); i++) {
+			cards.add(incoming.getCard(i));
 		}
+		return true;
+	}
+	public boolean addCard(Pile incoming) {
+		if(incoming.getNumCards() < 1) return false;
+		if(!canStack(incoming.getCard(0))) return false;
+		for (int i = 0; i < incoming.getNumCards(); i++) {
+			cards.add(incoming.getCard(i));
+		}
+		return true;
 	}
 	
 }

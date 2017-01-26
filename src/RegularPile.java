@@ -49,7 +49,6 @@ public class RegularPile extends Pile {
 	/*
 	 * Returns index of card at click location, -1 if click is outside the bounding box
 	 */
-	@Override
 	public int getIndex(int x, int y) { 
 		x = this.x-x;
 		y = this.y-y;
@@ -72,5 +71,10 @@ public class RegularPile extends Pile {
 		}
 		return -1;
 	} 
+	public boolean canStack(Card c) {
+		if(cards.size() == 0) return c.getRank() == 13;
+		Card lastCard = cards.get(cards.size() - 1);
+		return (c.getRank() + 1 == lastCard.getRank() && c.getColor() != lastCard.getColor());
+	}
 
 }
