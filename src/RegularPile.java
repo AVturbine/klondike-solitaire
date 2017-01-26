@@ -28,17 +28,19 @@ public class RegularPile extends Pile {
 	@Override
 	public void draw(Graphics g, int size) {
 		int originalY = y;
+		int yTemp = this.y;
+		int xTemp = this.x;
 		if (empty()) {
 			g.setColor(new Color(200, 200, 200));
 			g.drawRect(x, y, 73, 97);
 		} else {
 			for (Card c : cards) {
 				if (!c.getFaceUp()) {
-					c.draw(g, x, y, size);
-					y+=10;
+					c.draw(g, xTemp, yTemp, size);
+					yTemp+=10;
 				} else {
-					c.draw(g, x, y, size);
-					y+=20;
+					c.draw(g, xTemp, yTemp, size);
+					yTemp+=20;
 				}
 			}
 		}

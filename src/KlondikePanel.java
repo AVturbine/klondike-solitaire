@@ -12,23 +12,25 @@ public class KlondikePanel extends JPanel {
 	private Dimension dim = new Dimension(800, 600);
 	private Color backgroundColor = new Color(125,125,125);
 	public int count = 0;
-	Pile pile = new RegularPile(50, 50);
-	Pile pile2 = new FoundationPile(150, 300, "C");
-	Pile[] pileArray = new Pile[8];
-	Deck deck;
+	
+	protected static final int CARD_WIDTH = 73;
+	protected static final int CARD_HEIGHT = 97;
+	
+	Pile[] pileArray = new Pile[13];
 	
 	public KlondikePanel() {
+		
 		this.setPreferredSize(dim);
 		this.setBackground(backgroundColor);
-		deck = new Deck(50, 50);
-		for (int i = 0; i < 8; i++) {
-			pileArray[i] = new RegularPile(i*100, 15);
-			for (int k = 0; k < i+1; k++) {
-				pileArray[i].add(deck.deal());
-			}
-			((RegularPile) pileArray[i]).updateCardFaceStatus();
+		pileArray[0] = new Deck(50, 50);
+		pileArray[1] = new DrawPile(150, 50);
+		for (int i = 2; i<9; i++) {
+			pileArray[i] = new RegularPile((i-2) * 100 + 50, 200);
 		}
-		((RegularPile)pileArray[3]).updateCardFaceStatus();
+		pileArray[9] = new FoundationPile(350, 50, "H");
+		pileArray[10] = new FoundationPile(450, 50, "S");
+		pileArray[11] = new FoundationPile(550, 50, "D");
+		pileArray[12] = new FoundationPile(650, 50, "C");
 		this.addMouseListener(new MouseListener () {
 
 			@Override
@@ -70,10 +72,7 @@ public class KlondikePanel extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		pile.draw(g, 1);
-		pile2.draw(g, 1);
-		deck.draw(g, 1);
-		for (Pile p: pileArray) {
+		for (Pile p : pileArray) {
 			p.draw(g, 1);
 		}
 		count++;

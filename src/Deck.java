@@ -45,20 +45,20 @@ public class Deck extends Pile{
 	public void draw(Graphics g, int size) {
 		int originalY = y;
 		int originalX = x;
+		int yTemp = y;
+		int xTemp = x;
+		int count = 0;
 		if (empty()) {
 			g.setColor(new Color(200, 200, 200));
 			g.drawRect(x, y, 73, 97);
 			g.drawRoundRect(x + 5, y+5, 63, 87, 10, 20);
 		} else {
 			for (Card c : cards) {
-				if (!c.getFaceUp()) {
-					c.draw(g, x, y, size);
-					y+=1;
-					x+=1;
-				} else {
-					c.draw(g, x, y, size);
-					y+=1;
-					x+=1;
+				c.draw(g, xTemp, yTemp, size);
+				count++;
+				if (count % 2 == 0) {
+					yTemp-=1;
+					xTemp-=1;
 				}
 			}
 		}

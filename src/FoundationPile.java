@@ -1,9 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -42,6 +40,7 @@ public class FoundationPile extends Pile {
 			int centerX = boundingBox.width/2+x; int centerY = boundingBox.height/2+y;
 			int imageCenterX = resized.getHeight()/2; int imageCenterY = resized.getWidth()/2;
 			g.drawImage(resized, centerX-imageCenterX, centerY-imageCenterY, null);
+			System.out.println("I AM A LAZY BASTARD at " + centerX + " " + centerY);
 		}
 		else {
 			Card c = cards.get(cards.size()-1);
