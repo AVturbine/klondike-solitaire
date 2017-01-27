@@ -19,8 +19,8 @@ public class KlondikePanel extends JPanel {
 	Pile[] pileArray = new Pile[11];
 	Deck deck;
 	DrawPile drawPile;
-	MovePile cardBuffer;
-	int pileIndextoPickFrom; int cardIndexInPile;
+	MovePile moving;
+	int pileIndex;
 	
 	public KlondikePanel() {
 		
@@ -37,14 +37,31 @@ public class KlondikePanel extends JPanel {
 		pileArray[10] = new FoundationPile(650, 50, "C");
 		initializePiles();
 		this.requestFocusInWindow();
+		pileIndex = -1;
 		this.addMouseListener(new MouseListener () {
 
 			@Override
 			public void mouseClicked(MouseEvent m) {
-				for(int i = 0; i < 11; i++) {
+				int xC = m.getX();
+				int yC = m.getY();
+				if (m.getButton() == 3) {
+					if (pileIndex == -1) return;
+					pileArray[pileIndex].add(new MovePile(moving));
+					pileIndex = -1;
+				}
+				for (int i = 0; i < 11; i++) {
 					Pile p = pileArray[i];
-					if (p.getIndex(m.getX(), m.getY()) != -1) {
-						System.out.println(p.getIndex(m.getX(), m.getY()) + "by  pile at " + p.x + " "+ p.y);
+					if (p.getIndex(m.getX(), m.getY()) != -1 && p.getIndex(m.getX(), m.getY()) != -2 ) {
+						if(pileIndex == -1) {
+							moving = p.take(p.getIndex(m.getX(), m.getY()));
+							pileIndex = (moving == null) ? -1 : i;
+						}
+						else if(p.canStack(moving)) {
+							p.addCard(moving);
+							
+							pileIndex = -1;
+						}
+						repaint();
 					}
 				}
 				repaint();
@@ -64,39 +81,67 @@ public class KlondikePanel extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				int xC = e.getX();
-				int yC = e.getY();
+				if (e.getButton() == 3) {
+					if (pileIndex == -1) return;
+					pileArray[pileIndex].add(new MovePile(moving));
+					pileIndex = -1;
+				}
 				for (int i = 0; i < 11; i++) {
 					Pile p = pileArray[i];
 					if (p.getIndex(e.getX(), e.getY()) != -1 && p.getIndex(e.getX(), e.getY()) != -2 ) {
-						 pileIndextoPickFrom = i;
-						 cardIndexInPile = p.getIndex(e.getX(), e.getY());
-						 p.markAsSelected(cardIndexInPile, true);
-						 repaint();
+						if(pileIndex == -1) {
+							moving = p.take(p.getIndex(e.getX(), e.getY()));
+							pileIndex = (moving == null) ? -1 : i;
+						}
+						repaint();
 					}
 				}
-				
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				int xC = e.getX();
-				int yC = e.getY();
+			public void mouseReleased(MouseEvent m) {
+				if (pileIndex == -1) return;
 				for (int i = 0; i < 11; i++) {
 					Pile p = pileArray[i];
-					if (p.getIndex(e.getX(), e.getY()) != -1 && i != pileIndextoPickFrom) {
-						pileArray[pileIndextoPickFrom].markAsSelected(cardIndexInPile, false);
-						if (p.canStack(pileArray[pileIndextoPickFrom].queryFirstCard(cardIndexInPile))) {
-							p.addCard(pileArray[pileIndextoPickFrom].take(cardIndexInPile));
+					if (p.getIndex(m.getX(), m.getY()) != -1 && p.getIndex(m.getX(), m.getY()) != -2 ) {
+
+						if(pileIndex != -1 && p.canStack(moving)) {
+							p.addCard(moving);
+							((RegularPile) pileArray[pileIndex]).updateCardFaceStatus();
+							pileIndex = -1;
+							
 						}
-						maintainCardFlipStatus();
+						repaint();
+						return;
 					}
 				}
-				pileArray[pileIndextoPickFrom].markAsSelected(cardIndexInPile, false);
-				repaint();
 				
+				pileArray[pileIndex].add(new MovePile(moving));
+				pileIndex = -1;
+				repaint();
 			}
 				
+		});
+		this.addMouseMotionListener(new MouseMotionListener () {
+
+			@Override
+			public void mouseDragged(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				if(pileIndex != -1) {
+					moving.setPosition(arg0.getX(), arg0.getY());
+					repaint();
+				}
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				if(pileIndex != -1) {
+					moving.setPosition(arg0.getX(), arg0.getY());
+					repaint();
+				}
+			}
+			
 		});
 	}
 	
@@ -121,6 +166,7 @@ public class KlondikePanel extends JPanel {
 			p.draw(g, 1);
 		}
 		deck.draw(g, 1);
+		if (pileIndex != -1) moving.draw(g, 1);
 		drawPile.draw(g, 1);
 		count++;
 		Log.log("paintComponent has executed " + count + " times", Log.VERBOSE);
