@@ -16,30 +16,38 @@ public class KlondikePanel extends JPanel {
 	protected static final int CARD_WIDTH = 73;
 	protected static final int CARD_HEIGHT = 97;
 	
-	Pile[] pileArray = new Pile[13];
+	Pile[] pileArray = new Pile[11];
+	Deck deck;
+	DrawPile drawPile;
+	MovePile cardBuffer;
+	int pileIndextoPickFrom; int cardIndexInPile;
 	
 	public KlondikePanel() {
 		
 		this.setPreferredSize(dim);
 		this.setBackground(backgroundColor);
-		pileArray[0] = new Deck(50, 50);
-		pileArray[1] = new DrawPile(150, 50);
-		for (int i = 2; i<9; i++) {
-			pileArray[i] = new RegularPile((i-2) * 100 + 50, 200);
+		deck = new Deck(50, 50);
+		drawPile = new DrawPile(150, 50);
+		for (int i = 0; i<7; i++) {
+			pileArray[i] = new RegularPile(i * 100 + 50, 200);
 		}
-		pileArray[9] = new FoundationPile(350, 50, "H");
-		pileArray[10] = new FoundationPile(450, 50, "S");
-		pileArray[11] = new FoundationPile(550, 50, "D");
-		pileArray[12] = new FoundationPile(650, 50, "C");
+		pileArray[7] = new FoundationPile(350, 50, "H");
+		pileArray[8] = new FoundationPile(450, 50, "S");
+		pileArray[9] = new FoundationPile(550, 50, "D");
+		pileArray[10] = new FoundationPile(650, 50, "C");
+		initializePiles();
+		this.requestFocusInWindow();
 		this.addMouseListener(new MouseListener () {
 
 			@Override
 			public void mouseClicked(MouseEvent m) {
-				for(Pile p: pileArray) {
+				for(int i = 0; i < 11; i++) {
+					Pile p = pileArray[i];
 					if (p.getIndex(m.getX(), m.getY()) != -1) {
-						System.out.println(p.getIndex(m.getX(), m.getY()));
+						System.out.println(p.getIndex(m.getX(), m.getY()) + "by  pile at " + p.x + " "+ p.y);
 					}
 				}
+				repaint();
 			}
 
 			@Override
@@ -56,25 +64,64 @@ public class KlondikePanel extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
+				int xC = e.getX();
+				int yC = e.getY();
+				for (int i = 0; i < 11; i++) {
+					Pile p = pileArray[i];
+					if (p.getIndex(e.getX(), e.getY()) != -1 && p.getIndex(e.getX(), e.getY()) != -2 ) {
+						 pileIndextoPickFrom = i;
+						 cardIndexInPile = p.getIndex(e.getX(), e.getY());
+						 p.markAsSelected(cardIndexInPile, true);
+						 repaint();
+					}
+				}
 				
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
+				int xC = e.getX();
+				int yC = e.getY();
+				for (int i = 0; i < 11; i++) {
+					Pile p = pileArray[i];
+					if (p.getIndex(e.getX(), e.getY()) != -1 && i != pileIndextoPickFrom) {
+						pileArray[pileIndextoPickFrom].markAsSelected(cardIndexInPile, false);
+						if (p.canStack(pileArray[pileIndextoPickFrom].queryFirstCard(cardIndexInPile))) {
+							p.addCard(pileArray[pileIndextoPickFrom].take(cardIndexInPile));
+						}
+						maintainCardFlipStatus();
+					}
+				}
+				pileArray[pileIndextoPickFrom].markAsSelected(cardIndexInPile, false);
+				repaint();
+				
 			}
 				
 		});
 	}
 	
+	private void initializePiles() {
+		for (int i = 0; i < 7; i++) {
+			for (int j = 7-i; j < 8; j++) {
+				pileArray[i].add(deck.deal(false));
+			}
+		}
+		maintainCardFlipStatus();
+	}
 	
+	private void maintainCardFlipStatus() {
+		for (int i = 0; i < 7; i++) {
+			((RegularPile)pileArray[i]).updateCardFaceStatus();
+		}
+	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		for (Pile p : pileArray) {
 			p.draw(g, 1);
 		}
+		deck.draw(g, 1);
+		drawPile.draw(g, 1);
 		count++;
 		Log.log("paintComponent has executed " + count + " times", Log.VERBOSE);
 	}

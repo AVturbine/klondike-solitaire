@@ -55,10 +55,10 @@ public class Card implements Comparable<Card> {
 		if (faceUp) {
 			if (!selected) {
 				g.drawImage(front, x, y, width, height, null);
-				System.out.println("drew front");
+				Log.log("drew front", Log.VERBOSE);
 			} else {
 				g.drawImage(frontSelected, x, y, width, height, null);
-				System.out.println("drew frontS");
+				Log.log("drew frontS", Log.VERBOSE);
 			}
 		} else {
 			g.drawImage(back, x, y, width, height, null);

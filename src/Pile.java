@@ -29,11 +29,17 @@ public abstract class Pile {
 		return null;
 	}
 	public int getNumCards() { return cards.size(); }
-	public Pile pickUp(int index) {
+	
+	public Pile take(int index) {
 		List<Card> temp = cards.subList(index, cards.size());
 		this.cards = cards.subList(0, index);
 		return new MovePile(temp);
 	}
+	public Card queryFirstCard(int index) {
+		Card temp = cards.get(index);
+		return temp;
+	}
+	
 	public boolean add(Pile incoming) {
 		for (int i = 0; i < incoming.getNumCards(); i++) {
 			cards.add(incoming.getCard(i));
@@ -47,6 +53,14 @@ public abstract class Pile {
 			cards.add(incoming.getCard(i));
 		}
 		return true;
+	}
+	
+	public void markAsSelected(int index, boolean status) {
+		for (int i = index; i < cards.size(); i++) {
+			Card temp = cards.get(i);
+			temp.setSelected(status);
+			cards.set(i, temp);
+		}
 	}
 	
 }

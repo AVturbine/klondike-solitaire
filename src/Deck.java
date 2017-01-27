@@ -24,8 +24,10 @@ public class Deck extends Pile{
 		return this.cards.size() == 0 ? true : false;
 	}
 	
-	public Pile deal() {
-		return new MovePile(cards.remove(cards.size()-1));
+	public Pile deal(boolean state) {
+		Card temp = cards.remove(cards.size()-1);
+		temp.setSelected(state);
+		return new MovePile(temp);
 	}
 	
 	public Pile deal(int num) {
@@ -63,12 +65,11 @@ public class Deck extends Pile{
 			}
 		}
 		boundingBox.setSize(x-originalX+CARD_WIDTH, y-originalY+CARD_HEIGHT);
-		System.out.println(this.getBoundingBox());
 	}
 
 	@Override
-	public int getIndex(int x, int y) { // deck is not clickable per se?
-		return -1;
+	public int getIndex(int x, int y) { // special code that triggers dealing three cards to draw deck
+		return -3;
 	}
 
 	@Override

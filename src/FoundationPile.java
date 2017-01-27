@@ -30,17 +30,15 @@ public class FoundationPile extends Pile {
 		if (cards.size()==0) {
 			g.drawRect(x, y, 73, 97);
 			g.drawRoundRect(x + 5, y + 5, 63, 87, 10, 20);
-			BufferedImage resized = new BufferedImage(30, 30, suitImage.getType());
+			BufferedImage resized = new BufferedImage(SUIT_IMAGE_HEIGHT, SUIT_IMAGE_HEIGHT, suitImage.getType());
 			Graphics2D v = resized.createGraphics();
-			v.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-			    RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			v.drawImage(resized, 0, 0, 30, 30, 0, 0, suitImage.getWidth(),
+			v.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			v.drawImage(suitImage, 0, 0, 30, 30, 0, 0, suitImage.getWidth(),
 			    suitImage.getHeight(), null);
 			v.dispose();
 			int centerX = boundingBox.width/2+x; int centerY = boundingBox.height/2+y;
 			int imageCenterX = resized.getHeight()/2; int imageCenterY = resized.getWidth()/2;
 			g.drawImage(resized, centerX-imageCenterX, centerY-imageCenterY, null);
-			System.out.println("I AM A LAZY BASTARD at " + centerX + " " + centerY);
 		}
 		else {
 			Card c = cards.get(cards.size()-1);
@@ -53,7 +51,7 @@ public class FoundationPile extends Pile {
 	public int getIndex(int x, int y) { //returns index of top card (the one that's going to be clicked) if click is in bound box
 		x = x-this.x;
 		y = y-this.y;
-		if (!(x < 0 || x > boundingBox.getHeight() || y < 0 || y > boundingBox.getWidth())) return cards.size()-1;
+		if (!(x < 0 || x > boundingBox.getHeight() || y < 0 || y > boundingBox.getWidth())) return !empty() ? cards.size()-1 : -2; 
 		return -1;
 	}
 	
@@ -105,8 +103,14 @@ public class FoundationPile extends Pile {
 
 	@Override
 	public boolean canStack(Card c) {
-		// TODO Auto-generated method stub
+		if (!(cards.size() == 0)) {
+			return cards.get(cards.size()-1).getRank()+1 == c.getRank() && c.getSuit() == this.suit ? true : false;
+			
+		} else {
+			if (c.getRank() == 1 && c.getSuit() == this.suit) return true;
+		}
 		return false;
+		
 	}
 
 }

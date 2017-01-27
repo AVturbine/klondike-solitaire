@@ -17,34 +17,34 @@ public class RegularPile extends Pile {
 	 */
 	public void updateCardFaceStatus() {
 		if (!empty()) {
-			if(!cards.get(cards.size()-1).getFaceUp()) {
-				Card temp = cards.remove(cards.size()-1);
-				temp.setFaceUp(true);
-				cards.add(temp);
-			}
+			Card temp = cards.get(cards.size()-1);
+			temp.setFaceUp(true);
+			cards.set(cards.size()-1, temp);
 		}
 	}
 	
 	@Override
 	public void draw(Graphics g, int size) {
 		int originalY = y;
-		int yTemp = this.y;
-		int xTemp = this.x;
+		int originalX = x;
 		if (empty()) {
 			g.setColor(new Color(200, 200, 200));
 			g.drawRect(x, y, 73, 97);
 		} else {
 			for (Card c : cards) {
 				if (!c.getFaceUp()) {
-					c.draw(g, xTemp, yTemp, size);
-					yTemp+=10;
+					c.draw(g, x, y, size);
+					y+=10;
 				} else {
-					c.draw(g, xTemp, yTemp, size);
-					yTemp+=20;
+					c.draw(g, x, y, size);
+					y+=20;
 				}
 			}
 		}
+
 		boundingBox.setSize(boundingBox.getWidth(), y-originalY+CARD_HEIGHT);
+		this.y = originalY;
+		this.x = originalX;
 		Log.log(this.getBoundingBox().toString(), Log.VERBOSE);
 	}
 	
@@ -52,23 +52,27 @@ public class RegularPile extends Pile {
 	 * Returns index of card at click location, -1 if click is outside the bounding box
 	 */
 	public int getIndex(int x, int y) { 
-		x = this.x-x;
-		y = this.y-y;
-		if (!(x < 0 || x > boundingBox.getHeight() || y < 0 || y > boundingBox.getWidth())) { // determines if click is valid
+		x = x-this.x;
+		y = y-this.y;
+		if (!(x < 0 || x > boundingBox.getWidth() || y < 0 || y > boundingBox.getHeight())) { // determines if click is valid
 			int yMod = 0;
 			int previousYMod = 0;
-			for (int i = 0; i < cards.size(); i++) {
-				Card c = cards.get(i);
-				if (c.getFaceUp()) yMod+=20;
-				else yMod+=10;
-				if (i != cards.size()-1) { // if we got to the last card and y is valid but still not found, just go with the last index
-					if(previousYMod <=y && yMod >= y) {
+			if (!empty()) {
+				for (int i = 0; i < cards.size(); i++) {
+					Card c = cards.get(i);
+					if (c.getFaceUp()) yMod+=20;
+					else yMod+=10;
+					if (i != cards.size()-1) { // if we got to the last card and y is valid but still not found, just go with the last index
+						if(previousYMod <=y && yMod >= y) {
+							return i;
+						}
+					} else {
 						return i;
 					}
-				} else {
-					return i;
+					previousYMod = yMod;
 				}
-				previousYMod = yMod;
+			} else {
+				return -2;
 			}
 		}
 		return -1;
@@ -78,5 +82,6 @@ public class RegularPile extends Pile {
 		Card lastCard = cards.get(cards.size() - 1);
 		return (c.getRank() + 1 == lastCard.getRank() && c.getColor() != lastCard.getColor());
 	}
+
 
 }
