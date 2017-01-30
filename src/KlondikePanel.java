@@ -16,9 +16,8 @@ public class KlondikePanel extends JPanel {
 	protected static final int CARD_WIDTH = 73;
 	protected static final int CARD_HEIGHT = 97;
 	
-	Pile[] pileArray = new Pile[11];
+	Pile[] pileArray = new Pile[12];
 	Deck deck;
-	DrawPile drawPile;
 	MovePile cardBuffer;
 	int pileIndextoPickFrom; int cardIndexInPile;
 	
@@ -27,7 +26,6 @@ public class KlondikePanel extends JPanel {
 		this.setPreferredSize(dim);
 		this.setBackground(backgroundColor);
 		deck = new Deck(50, 50);
-		drawPile = new DrawPile(150, 50);
 		for (int i = 0; i<7; i++) {
 			pileArray[i] = new RegularPile(i * 100 + 50, 200);
 		}
@@ -35,16 +33,28 @@ public class KlondikePanel extends JPanel {
 		pileArray[8] = new FoundationPile(450, 50, "S");
 		pileArray[9] = new FoundationPile(550, 50, "D");
 		pileArray[10] = new FoundationPile(650, 50, "C");
+		pileArray[11] = new DrawPile(150, 50);
 		initializePiles();
 		this.requestFocusInWindow();
 		this.addMouseListener(new MouseListener () {
 
 			@Override
 			public void mouseClicked(MouseEvent m) {
-				for(int i = 0; i < 11; i++) {
+				for(int i = 0; i < 12; i++) {
 					Pile p = pileArray[i];
 					if (p.getIndex(m.getX(), m.getY()) != -1) {
 						System.out.println(p.getIndex(m.getX(), m.getY()) + "by  pile at " + p.x + " "+ p.y);
+					}
+				}
+				
+				if (deck.getIndex(m.getX(), m.getY()) == 0) {
+					int counter = 3;
+					if (!deck.empty()) {
+						do {
+							Pile temp = deck.deal(true);
+							pileArray[11].add(temp);
+							counter--;
+						} while(!deck.empty() && counter > 0);
 					}
 				}
 				repaint();
@@ -66,7 +76,7 @@ public class KlondikePanel extends JPanel {
 			public void mousePressed(MouseEvent e) {
 				int xC = e.getX();
 				int yC = e.getY();
-				for (int i = 0; i < 11; i++) {
+				for (int i = 0; i < 12; i++) {
 					Pile p = pileArray[i];
 					if (p.getIndex(e.getX(), e.getY()) != -1 && p.getIndex(e.getX(), e.getY()) != -2 ) {
 						 pileIndextoPickFrom = i;
@@ -74,7 +84,8 @@ public class KlondikePanel extends JPanel {
 						 p.markAsSelected(cardIndexInPile, true);
 						 repaint();
 					}
-				}
+				} 
+				
 				
 			}
 
@@ -82,7 +93,7 @@ public class KlondikePanel extends JPanel {
 			public void mouseReleased(MouseEvent e) {
 				int xC = e.getX();
 				int yC = e.getY();
-				for (int i = 0; i < 11; i++) {
+				for (int i = 0; i < 12; i++) {
 					Pile p = pileArray[i];
 					if (p.getIndex(e.getX(), e.getY()) != -1 && i != pileIndextoPickFrom) {
 						pileArray[pileIndextoPickFrom].markAsSelected(cardIndexInPile, false);
@@ -121,7 +132,6 @@ public class KlondikePanel extends JPanel {
 			p.draw(g, 1);
 		}
 		deck.draw(g, 1);
-		drawPile.draw(g, 1);
 		count++;
 		Log.log("paintComponent has executed " + count + " times", Log.VERBOSE);
 	}
