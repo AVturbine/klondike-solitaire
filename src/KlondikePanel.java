@@ -20,7 +20,36 @@ public class KlondikePanel extends JPanel {
 	Deck deck;
 	DrawPile drawPile;
 	MovePile moving;
-	int pileIndex;
+	Pile pileIndex;
+	
+	private void releaseMove() {
+
+		if (!holdingCard()) return;
+		pileIndex.add(moving);
+		pileIndex = null;
+		moving = null;
+	}
+	
+	private Pile pileAtPoint(int x, int y) {
+		for (int i = 0; i < 11; i++) {
+			Pile p = pileArray[i];
+			if (p.getIndex(x, y) != -1 && p.getIndex(x, y) != -2 ) 
+				return p;
+		}
+		return null;
+	}
+	
+	private boolean holdingCard() { return pileIndex != null; }
+	
+	private void grabPile(Pile p, int i) {
+		moving = p.take(i);
+		if(moving != null) pileIndex = p;
+	}
+	
+	private void dropPile(Pile p) {
+		p.add(moving);
+		pileIndex = null;
+	}
 	
 	public KlondikePanel() {
 		
@@ -37,34 +66,35 @@ public class KlondikePanel extends JPanel {
 		pileArray[10] = new FoundationPile(650, 50, "C");
 		initializePiles();
 		this.requestFocusInWindow();
-		pileIndex = -1;
+		pileIndex = null;
+		
 		this.addMouseListener(new MouseListener () {
 
 			@Override
 			public void mouseClicked(MouseEvent m) {
-				int xC = m.getX();
-				int yC = m.getY();
 				if (m.getButton() == 3) {
-					if (pileIndex == -1) return;
-					pileArray[pileIndex].add(new MovePile(moving));
-					pileIndex = -1;
+					releaseMove();
+					repaint();
+					return;
 				}
-				for (int i = 0; i < 11; i++) {
-					Pile p = pileArray[i];
-					if (p.getIndex(m.getX(), m.getY()) != -1 && p.getIndex(m.getX(), m.getY()) != -2 ) {
-						if(pileIndex == -1) {
-							moving = p.take(p.getIndex(m.getX(), m.getY()));
-							pileIndex = (moving == null) ? -1 : i;
-						}
-						else if(p.canStack(moving)) {
-							p.addCard(moving);
-							
-							pileIndex = -1;
-						}
-						repaint();
-					}
+	
+				Pile p = pileAtPoint(m.getX(), m.getY());
+				if(p == null) {
+					releaseMove();
+					repaint();
+					return;
+				}
+				int takeIndex = p.getIndex(m.getX(), m.getY());
+				if(!holdingCard() && p.canTake(takeIndex)) {
+					grabPile(p, takeIndex);
+					return;
+				}
+				else if(holdingCard()){
+					if (p.canStack(moving)) dropPile(p);
+					//TODO return to spile
 				}
 				repaint();
+				
 			}
 
 			@Override
@@ -79,9 +109,8 @@ public class KlondikePanel extends JPanel {
 				
 			}
 
-			@Override
 			public void mousePressed(MouseEvent e) {
-				if (e.getButton() == 3) {
+				/*if (e.getButton() == 3) {
 					if (pileIndex == -1) return;
 					pileArray[pileIndex].add(new MovePile(moving));
 					pileIndex = -1;
@@ -95,12 +124,12 @@ public class KlondikePanel extends JPanel {
 						}
 						repaint();
 					}
-				}
+				}*/
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent m) {
-				if (pileIndex == -1) return;
+				/*if (pileIndex == -1) return;
 				for (int i = 0; i < 11; i++) {
 					Pile p = pileArray[i];
 					if (p.getIndex(m.getX(), m.getY()) != -1 && p.getIndex(m.getX(), m.getY()) != -2 ) {
@@ -118,7 +147,7 @@ public class KlondikePanel extends JPanel {
 				
 				pileArray[pileIndex].add(new MovePile(moving));
 				pileIndex = -1;
-				repaint();
+				repaint();*/
 			}
 				
 		});
@@ -127,16 +156,16 @@ public class KlondikePanel extends JPanel {
 			@Override
 			public void mouseDragged(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				if(pileIndex != -1) {
+				/* if(pileIndex != -1) {
 					moving.setPosition(arg0.getX(), arg0.getY());
 					repaint();
-				}
+				} */
 			}
 
 			@Override
 			public void mouseMoved(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				if(pileIndex != -1) {
+				if(holdingCard()) {
 					moving.setPosition(arg0.getX(), arg0.getY());
 					repaint();
 				}
@@ -166,7 +195,7 @@ public class KlondikePanel extends JPanel {
 			p.draw(g, 1);
 		}
 		deck.draw(g, 1);
-		if (pileIndex != -1) moving.draw(g, 1);
+		if (holdingCard() && moving != null) moving.draw(g, 1);
 		drawPile.draw(g, 1);
 		count++;
 		Log.log("paintComponent has executed " + count + " times", Log.VERBOSE);

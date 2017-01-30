@@ -30,7 +30,8 @@ public class RegularPile extends Pile {
 		if (empty()) {
 			g.setColor(new Color(200, 200, 200));
 			g.drawRect(x, y, 73, 97);
-		} else {
+		}
+		else {
 			for (Card c : cards) {
 				if (!c.getFaceUp()) {
 					c.draw(g, x, y, size);

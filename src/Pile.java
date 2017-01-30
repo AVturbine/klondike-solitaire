@@ -14,7 +14,7 @@ public abstract class Pile {
 	Dimension boundingBox = new Dimension (CARD_WIDTH, CARD_HEIGHT);
 	public Dimension getBoundingBox() {return boundingBox;}
 	
-	public boolean empty() {return cards.size()==0?true:false;}
+	public boolean empty() {return cards.size()==0;}
 	
 	public int size() {return cards.size();}
 
@@ -32,6 +32,9 @@ public abstract class Pile {
 	}
 	public int getNumCards() { return cards.size(); }
 	
+	public boolean canTake(int index) {
+		return cards.get(index).getFaceUp();
+	}
 	public MovePile take(int index) {
 		if(!cards.get(index).getFaceUp()) return null;
 		List<Card> temp = cards.subList(index, cards.size());
