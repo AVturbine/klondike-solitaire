@@ -108,5 +108,15 @@ public class Deck extends Pile{
 		arrowIcon = resized;
 	}
 	
+	@Override
+	public boolean add(Pile incoming) {
+		for (int i = 0; i < incoming.getNumCards(); i++) {
+			Card c = incoming.getCard(i);
+			c.setFaceUp(false);
+			cards.add(c);
+		}
+		return true;
+	} 
+	
 	
 }

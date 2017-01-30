@@ -57,6 +57,11 @@ public class KlondikePanel extends JPanel {
 						} while(!deck.empty() && counter > 0);
 					}
 				}
+				else if (deck.getIndex(m.getX(), m.getY()) == -4) { // if deck is empty and it is clicked again
+					Pile p = ((DrawPile) pileArray[11]).take(0);	
+					System.out.println(p.getNumCards());
+					deck.add(p);
+				}
 				repaint();
 			}
 
