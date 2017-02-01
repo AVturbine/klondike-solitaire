@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Date;
 
 import javax.swing.Timer;
 import javax.swing.JPanel;
@@ -21,15 +22,72 @@ public class KlondikePanel extends JPanel {
 	
 	Pile[] pileArray = new Pile[12];
 	Deck deck;
-	MovePile cardBuffer;
+
 	Timer timer;
 	UIHandler ui = new UIHandler();
 	Scorekeeper sc = new Scorekeeper();
 	int elapsedSeconds = 0;
 	int movesMade = 0;
 	int score = 0;
-	int fromPile; int cardIndexInPile;
+	int fromPile; 
+	int cardIndexInPile;
+	DrawPile drawPile;
+	MovePile moving;
+	Pile pileIndex;
 	
+	private void releaseMove() {
+
+		if (!holdingCard()) return;
+		pileIndex.add(moving);
+		pileIndex = null;
+		moving = null;
+		repaint();
+	}
+	
+	private Pile pileAtPoint(int x, int y) {
+		for (int i = 0; i < 12; i++) {
+			Pile p = pileArray[i];
+			if (p.getIndex(x, y) != -1) 
+				return p;
+		}
+		return null;
+	}
+	
+	private boolean holdingCard() { return pileIndex != null; }
+	
+	private void grabPile(Pile p, int i, int x, int y) {
+		moving = new MovePile(p.take(i));
+		if(moving != null) {
+			pileIndex = p;
+			moving.setPosition(x, y);
+			repaint();
+		}
+		
+	}
+	
+	int getIndex(Pile p) {
+		for(int i = 0; i < 12; i++) {
+			if(pileArray[i] == p) return i;
+		}
+		return -1;
+	}
+	
+	private void dropPile(Pile p) {
+		p.add(moving);
+		boolean flipped = false;
+		if(pileIndex.getClass() == pileArray[0].getClass()) flipped = ((RegularPile)pileIndex).updateCardFaceStatus();
+		pileIndex = null;
+		score = sc.keepScore(getIndex(pileIndex), getIndex(p), score, (flipped) ? 1 : 0);
+		movesMade++;
+		repaint();
+	}
+	
+	private boolean deckClicked(int x, int y) {
+		return deck.getIndex(x, y) == 0 || deck.getIndex(x, y) == -4;
+	}
+	
+	//for stuff
+	Date pressedTime;
 	public KlondikePanel() {
 		
 		this.setPreferredSize(dim);
@@ -47,27 +105,13 @@ public class KlondikePanel extends JPanel {
 		setUpTimer(1000);
 		timer.start();
 		this.requestFocusInWindow();
+		pileIndex = null;
+		
 		this.addMouseListener(new MouseListener () {
 
 			@Override
 			public void mouseClicked(MouseEvent m) {
-				if (deck.getIndex(m.getX(), m.getY()) == 0) {
-					int counter = 3;
-					if (!deck.empty()) {
-						do {
-							Pile temp = deck.deal(true);
-							pileArray[11].add(temp);
-							counter--;
-						} while(!deck.empty() && counter > 0);
-						movesMade++;
-					}
-				}
-				else if (deck.getIndex(m.getX(), m.getY()) == -4) { // if deck is empty and it is clicked again
-					Pile p = ((DrawPile) pileArray[11]).take(0);	
-					deck.add(p);
-					movesMade++;
-				}
-				repaint();
+		
 			}
 
 			@Override
@@ -81,42 +125,79 @@ public class KlondikePanel extends JPanel {
 				// TODO Auto-generated method stub
 				
 			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				for (int i = 0; i < 12; i++) {
-					Pile p = pileArray[i];
-					if (p.getIndex(e.getX(), e.getY()) != -1 && p.getIndex(e.getX(), e.getY()) != -2 ) {
-						 fromPile = i;
-						 cardIndexInPile = p.getIndex(e.getX(), e.getY());
-						 p.markAsSelected(cardIndexInPile, true);
-						 repaint();
+			public void mousePressed(MouseEvent m) {
+				pressedTime = new Date();
+				if (m.getButton() == 3) {
+					releaseMove();
+					return;
+				}
+	
+				if (deckClicked(m.getX(), m.getY())) {
+					movesMade++;
+					if(!deck.empty()) {
+						pileArray[11].add(deck.getThree());
+						repaint();
+						return;
 					}
-				} 
-			}
-			
-			
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				for (int i = 0; i < 12; i++) {
-					Pile p = pileArray[i];
-					if (p.getIndex(e.getX(), e.getY()) != -1 && i != fromPile) {
-						pileArray[fromPile].markAsSelected(cardIndexInPile, false);
-						if (p.canStack(pileArray[fromPile].queryFirstCard(cardIndexInPile))) {
-							p.addCard(pileArray[fromPile].take(cardIndexInPile));
-							int cardsFlipped = maintainCardFlipStatus();
-							score = sc.keepScore(fromPile, i, score, cardsFlipped);
-							movesMade++;
-						}
-						
+					else { // if deck is empty and it is clicked again
+						Pile l = ((DrawPile) pileArray[11]).take(0);
+						deck.add(l);
 					}
 				}
-				pileArray[fromPile].markAsSelected(cardIndexInPile, false);
-				repaint();
 				
+				Pile p = pileAtPoint(m.getX(), m.getY());
+				if(p == null) {
+					releaseMove();
+					return;
+				}
+				int takeIndex = p.getIndex(m.getX(), m.getY());
+				if(!holdingCard() && p.canTake(takeIndex)) {
+					grabPile(p, takeIndex, m.getX(), m.getY());
+					return;
+				}
+				else if(holdingCard()){
+					if (p.canStack(moving)) dropPile(p);
+					//TODO return to spile
+				}
+			}
+			
+			
+			
+			@Override
+			public void mouseReleased(MouseEvent m) {
+				long timeClicked = new Date().getTime() - pressedTime.getTime();
+	            if (timeClicked >= 300) {
+	                // DO YOUR ACTION HERE
+	            	if(holdingCard()){
+	            		Pile p = pileAtPoint(m.getX(), m.getY());
+						if (p != null && p.canStack(moving)) dropPile(p);
+						else releaseMove();
+					}
+	            	releaseMove();
+					repaint();
+					return;
+	            }
 			}
 				
+		});
+		this.addMouseMotionListener(new MouseMotionListener () {
+
+			@Override
+			public void mouseDragged(MouseEvent arg0) {
+				if(holdingCard()) {
+					moving.setPosition(arg0.getX(), arg0.getY());
+					repaint();
+				}
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent arg0) {
+				if(holdingCard()) {
+					moving.setPosition(arg0.getX(), arg0.getY());
+					repaint();
+				}
+			}
+			
 		});
 	}
 	
@@ -146,6 +227,9 @@ public class KlondikePanel extends JPanel {
 		ui.drawTime(g, 15, this.getHeight()-15, elapsedSeconds);
 		ui.drawMoveCount(g, this.getWidth() - g.getFontMetrics().stringWidth("Moves: "+ movesMade) - 15, this.getHeight()-15, movesMade);
 		ui.drawScore(g, 15, this.getHeight() - 15 - g.getFontMetrics().getHeight() - 15, score);
+		if (holdingCard() && moving != null) moving.draw(g, 1);
+		count++;
+		Log.log("paintComponent has executed " + count + " times", Log.VERBOSE);
 	}
 
 	private void setUpTimer(int tickSpeed) {

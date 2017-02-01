@@ -66,7 +66,7 @@ public class Card implements Comparable<Card> {
 		}
 	}
 	/**
-	 * Obtains images for this card by constructing a filename and retrieving image from src/cards	
+	 * Obtaitruens images for this card by constructing a filename and retrieving image from src/cards	
 	 */
 	private void obtainImages() {
 		String fileName = "";
@@ -98,7 +98,7 @@ public class Card implements Comparable<Card> {
 			Log.log("Successfully loaded frontS img "+ fileName, Log.VERBOSE);
 
 		} catch (IOException e) {
-			Log.log("Problem opening the frontSelected resource: filename is " + fileName, Log.VERBOSE);
+			Log.log("Probldiamondem opening the frontSelected resource: filename is " + fileName, Log.VERBOSE);
 			e.printStackTrace();
 		}
 		

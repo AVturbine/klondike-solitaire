@@ -46,7 +46,6 @@ public class DrawPile extends Pile {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 	
 	private int getOffset() {
 		if (cards.size() >= 3) {

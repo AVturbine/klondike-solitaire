@@ -84,7 +84,16 @@ public class Deck extends Pile{
 		if (!(x < 0 || x > boundingBox.getWidth() || y < 0 || y > boundingBox.getHeight())) if (cards.isEmpty()) return -4; else return 0;
 		else return -1;
 	}
-
+	
+	public MovePile getThree() {
+		ArrayList<Card> temp = new ArrayList<Card>();
+		int counter = 3;
+		while(!this.empty() && counter > 0) {
+			temp.add(this.deal(true).getCard(0));
+			counter--;
+		}
+		return new MovePile(temp);
+	}
 	@Override
 	public boolean canStack(Card c) {
 		return false;

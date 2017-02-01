@@ -14,7 +14,7 @@ public abstract class Pile {
 	Dimension boundingBox = new Dimension (CARD_WIDTH, CARD_HEIGHT);
 	public Dimension getBoundingBox() {return boundingBox;}
 	
-	public boolean empty() {return cards.size()==0?true:false;}
+	public boolean empty() {return cards.size()==0;}
 	
 	public int size() {return cards.size();}
 
@@ -22,7 +22,9 @@ public abstract class Pile {
 	public abstract int getIndex(int x, int y);
 	public abstract boolean canStack(Card c);
 	
-	
+	public boolean canStack(Pile p) {
+		return canStack(p.getCard(0));
+	}
 	public Card getCard(int i) { 
 		if (i < cards.size()) return cards.get(i); 
 		Log.error("Out of pile bounds");
@@ -30,9 +32,14 @@ public abstract class Pile {
 	}
 	public int getNumCards() { return cards.size(); }
 	
-	public Pile take(int index) {
+	public boolean canTake(int index) {
+		return cards.get(index).getFaceUp();
+	}
+	public MovePile take(int index) {
+		if(!cards.get(index).getFaceUp()) return null;
 		List<Card> temp = cards.subList(index, cards.size());
 		this.cards = cards.subList(0, index);
+		
 		return new MovePile(temp);
 	}
 	public Card queryFirstCard(int index) {
