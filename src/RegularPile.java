@@ -15,12 +15,16 @@ public class RegularPile extends Pile {
 	/*
 	 * Flips top card if all faceup cards are taken off the pile
 	 */
-	public void updateCardFaceStatus() {
+	public boolean updateCardFaceStatus() {
 		if (!empty()) {
+			boolean flipped = false;
 			Card temp = cards.get(cards.size()-1);
+			if (!temp.getFaceUp()) flipped = true;
 			temp.setFaceUp(true);
 			cards.set(cards.size()-1, temp);
+			return flipped;
 		}
+		return false;
 	}
 	
 	@Override

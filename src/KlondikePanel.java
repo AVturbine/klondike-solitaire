@@ -2,10 +2,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.Timer;
 import javax.swing.JPanel;
 
 public class KlondikePanel extends JPanel {
@@ -19,7 +22,13 @@ public class KlondikePanel extends JPanel {
 	Pile[] pileArray = new Pile[12];
 	Deck deck;
 	MovePile cardBuffer;
-	int pileIndextoPickFrom; int cardIndexInPile;
+	Timer timer;
+	UIHandler ui = new UIHandler();
+	Scorekeeper sc = new Scorekeeper();
+	int elapsedSeconds = 0;
+	int movesMade = 0;
+	int score = 0;
+	int fromPile; int cardIndexInPile;
 	
 	public KlondikePanel() {
 		
@@ -35,18 +44,13 @@ public class KlondikePanel extends JPanel {
 		pileArray[10] = new FoundationPile(650, 50, "C");
 		pileArray[11] = new DrawPile(150, 50);
 		initializePiles();
+		setUpTimer(1000);
+		timer.start();
 		this.requestFocusInWindow();
 		this.addMouseListener(new MouseListener () {
 
 			@Override
 			public void mouseClicked(MouseEvent m) {
-				for(int i = 0; i < 12; i++) {
-					Pile p = pileArray[i];
-					if (p.getIndex(m.getX(), m.getY()) != -1) {
-						System.out.println(p.getIndex(m.getX(), m.getY()) + "by  pile at " + p.x + " "+ p.y);
-					}
-				}
-				
 				if (deck.getIndex(m.getX(), m.getY()) == 0) {
 					int counter = 3;
 					if (!deck.empty()) {
@@ -55,12 +59,13 @@ public class KlondikePanel extends JPanel {
 							pileArray[11].add(temp);
 							counter--;
 						} while(!deck.empty() && counter > 0);
+						movesMade++;
 					}
 				}
 				else if (deck.getIndex(m.getX(), m.getY()) == -4) { // if deck is empty and it is clicked again
 					Pile p = ((DrawPile) pileArray[11]).take(0);	
-					System.out.println(p.getNumCards());
 					deck.add(p);
+					movesMade++;
 				}
 				repaint();
 			}
@@ -79,36 +84,35 @@ public class KlondikePanel extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				int xC = e.getX();
-				int yC = e.getY();
 				for (int i = 0; i < 12; i++) {
 					Pile p = pileArray[i];
 					if (p.getIndex(e.getX(), e.getY()) != -1 && p.getIndex(e.getX(), e.getY()) != -2 ) {
-						 pileIndextoPickFrom = i;
+						 fromPile = i;
 						 cardIndexInPile = p.getIndex(e.getX(), e.getY());
 						 p.markAsSelected(cardIndexInPile, true);
 						 repaint();
 					}
 				} 
-				
-				
 			}
-
+			
+			
+			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				int xC = e.getX();
-				int yC = e.getY();
 				for (int i = 0; i < 12; i++) {
 					Pile p = pileArray[i];
-					if (p.getIndex(e.getX(), e.getY()) != -1 && i != pileIndextoPickFrom) {
-						pileArray[pileIndextoPickFrom].markAsSelected(cardIndexInPile, false);
-						if (p.canStack(pileArray[pileIndextoPickFrom].queryFirstCard(cardIndexInPile))) {
-							p.addCard(pileArray[pileIndextoPickFrom].take(cardIndexInPile));
+					if (p.getIndex(e.getX(), e.getY()) != -1 && i != fromPile) {
+						pileArray[fromPile].markAsSelected(cardIndexInPile, false);
+						if (p.canStack(pileArray[fromPile].queryFirstCard(cardIndexInPile))) {
+							p.addCard(pileArray[fromPile].take(cardIndexInPile));
+							int cardsFlipped = maintainCardFlipStatus();
+							score = sc.keepScore(fromPile, i, score, cardsFlipped);
+							movesMade++;
 						}
-						maintainCardFlipStatus();
+						
 					}
 				}
-				pileArray[pileIndextoPickFrom].markAsSelected(cardIndexInPile, false);
+				pileArray[fromPile].markAsSelected(cardIndexInPile, false);
 				repaint();
 				
 			}
@@ -125,10 +129,12 @@ public class KlondikePanel extends JPanel {
 		maintainCardFlipStatus();
 	}
 	
-	private void maintainCardFlipStatus() {
+	private int maintainCardFlipStatus() {
+		int count = 0;
 		for (int i = 0; i < 7; i++) {
-			((RegularPile)pileArray[i]).updateCardFaceStatus();
+			count += ((RegularPile)pileArray[i]).updateCardFaceStatus() ? 1 : 0;
 		}
+		return count;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -137,10 +143,21 @@ public class KlondikePanel extends JPanel {
 			p.draw(g, 1);
 		}
 		deck.draw(g, 1);
-		count++;
-		Log.log("paintComponent has executed " + count + " times", Log.VERBOSE);
+		ui.drawTime(g, 15, this.getHeight()-15, elapsedSeconds);
+		ui.drawMoveCount(g, this.getWidth() - g.getFontMetrics().stringWidth("Moves: "+ movesMade) - 15, this.getHeight()-15, movesMade);
+		ui.drawScore(g, 15, this.getHeight() - 15 - g.getFontMetrics().getHeight() - 15, score);
 	}
 
+	private void setUpTimer(int tickSpeed) {
+		timer = new Timer(tickSpeed, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				elapsedSeconds++;
+				repaint();
+			}
+			
+		});
+	}
 
 	
 }
