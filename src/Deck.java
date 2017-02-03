@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -125,6 +126,12 @@ public class Deck extends Pile{
 			cards.add(c);
 		}
 		return true;
+	}
+
+	@Override
+	public Point getCardLoc(int index) {
+		// TODO Auto-generated method stub
+		return null;
 	} 
 	
 	

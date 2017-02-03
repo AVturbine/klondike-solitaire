@@ -1,5 +1,6 @@
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public abstract class Pile {
 	public abstract void draw(Graphics g, int size);
 	public abstract int getIndex(int x, int y);
 	public abstract boolean canStack(Card c);
-	
+	public abstract Point getCardLoc(int index);
 	public boolean canStack(Pile p) {
 		return canStack(p.getCard(0));
 	}

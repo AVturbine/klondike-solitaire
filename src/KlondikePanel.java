@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -56,7 +57,8 @@ public class KlondikePanel extends JPanel {
 	private boolean holdingCard() { return pileIndex != null; }
 	
 	private void grabPile(Pile p, int i, int x, int y) {
-		moving = new MovePile(p.take(i));
+		Point og = p.getCardLoc(i);
+		moving = new MovePile(p.take(i), og.x - x, og.y - y);
 		if(moving != null) {
 			pileIndex = p;
 			moving.setPosition(x, y);
@@ -87,7 +89,6 @@ public class KlondikePanel extends JPanel {
 	}
 	
 	//for stuff
-	Date pressedTime;
 	public KlondikePanel() {
 		
 		this.setPreferredSize(dim);
@@ -126,7 +127,6 @@ public class KlondikePanel extends JPanel {
 				
 			}
 			public void mousePressed(MouseEvent m) {
-				pressedTime = new Date();
 				if (m.getButton() == 3) {
 					releaseMove();
 					return;
@@ -165,8 +165,8 @@ public class KlondikePanel extends JPanel {
 			
 			@Override
 			public void mouseReleased(MouseEvent m) {
-				long timeClicked = new Date().getTime() - pressedTime.getTime();
-	            if (timeClicked >= 300) {
+				if(!holdingCard()) return;
+	            if (pileIndex.getIndex(m.getX(), m.getY()) == -1) {
 	                // DO YOUR ACTION HERE
 	            	if(holdingCard()){
 	            		Pile p = pileAtPoint(m.getX(), m.getY());

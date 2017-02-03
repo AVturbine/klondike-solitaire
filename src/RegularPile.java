@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +87,23 @@ public class RegularPile extends Pile {
 		if(cards.size() == 0) return c.getRank() == 13;
 		Card lastCard = cards.get(cards.size() - 1);
 		return (c.getRank() + 1 == lastCard.getRank() && c.getColor() != lastCard.getColor());
+	}
+
+	@Override
+	public Point getCardLoc(int index) {
+		int originalY = y;
+		int originalX = x;
+		if (empty()) {
+			return null;
+		}
+		for (int i = 0; i < index; i++) {
+			if (!cards.get(i).getFaceUp()) {
+				originalY+=10;
+			} else {
+				originalY+=20;
+			}
+		}
+		return new Point(originalX, originalY);
 	}
 
 
