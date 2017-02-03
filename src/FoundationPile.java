@@ -17,6 +17,7 @@ public class FoundationPile extends Pile {
 	BufferedImage suitImage;
 	int SUIT_IMAGE_HEIGHT = 30;
 	
+	
 	public FoundationPile(int x, int y, String suit) {
 		cards = new ArrayList<Card>();
 		this.suit = suit;
@@ -25,10 +26,13 @@ public class FoundationPile extends Pile {
 		loadImages();
 	}
 
+	
 	@Override
 	public void draw(Graphics g,  int size) {
 		g.setColor(new Color(255, 235, 0));
 		if (cards.size()==0) {
+			if(highlight) g.setColor(new Color(255, 0, 0));
+			//g.fillRect(x, y, 73, 97);
 			g.drawRect(x, y, 73, 97);
 			g.drawRoundRect(x + 5, y + 5, 63, 87, 10, 20);
 			BufferedImage resized = new BufferedImage(SUIT_IMAGE_HEIGHT, SUIT_IMAGE_HEIGHT, suitImage.getType());

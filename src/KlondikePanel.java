@@ -42,6 +42,7 @@ public class KlondikePanel extends JPanel {
 		pileIndex.add(moving);
 		pileIndex = null;
 		moving = null;
+		setAvailableSelected();
 		repaint();
 	}
 	
@@ -56,12 +57,28 @@ public class KlondikePanel extends JPanel {
 	
 	private boolean holdingCard() { return pileIndex != null; }
 	
+	private void setAvailableSelected() {
+		if(!holdingCard() || moving == null){
+			for(int i = 0; i < 11; i++) {
+				pileArray[i].markAllUnselected();
+			}
+			return;
+		}
+		//exclude drawpile
+		for(int i = 0; i < 11; i++) {
+			if(pileArray[i].canStack(moving)) {
+				pileArray[i].markAsSelected(pileArray[i].size() - 1, true);
+			}
+		}
+	}
+	
 	private void grabPile(Pile p, int i, int x, int y) {
 		Point og = p.getCardLoc(i);
 		moving = new MovePile(p.take(i), og.x - x, og.y - y);
 		if(moving != null) {
 			pileIndex = p;
 			moving.setPosition(x, y);
+			setAvailableSelected();
 			repaint();
 		}
 		
@@ -81,6 +98,7 @@ public class KlondikePanel extends JPanel {
 		pileIndex = null;
 		score = sc.keepScore(getIndex(pileIndex), getIndex(p), score, (flipped) ? 1 : 0);
 		movesMade++;
+		setAvailableSelected();
 		repaint();
 	}
 	

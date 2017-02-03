@@ -24,6 +24,7 @@ public abstract class Pile {
 	public abstract boolean canStack(Card c);
 	public abstract Point getCardLoc(int index);
 	public boolean canStack(Pile p) {
+		if(p.size() == 0) return false;
 		return canStack(p.getCard(0));
 	}
 	public Card getCard(int i) { 
@@ -63,11 +64,31 @@ public abstract class Pile {
 		return true;
 	}
 	
+	//TODO jank
+	public void highlightEmpty() {
+		highlight = true;
+	}
+	public void noHighlight() {
+		highlight = false;
+	}
+	
 	public void markAsSelected(int index, boolean status) {
+		if(cards.size() == 0) {
+			this.highlightEmpty();
+			return;
+		}
 		for (int i = index; i < cards.size(); i++) {
 			Card temp = cards.get(i);
 			temp.setSelected(status);
 			cards.set(i, temp);
+		}
+	}
+	protected boolean highlight = false;
+	
+	public void markAllUnselected() {
+		noHighlight();
+		for (int i = 0; i < cards.size(); i++) {
+			cards.get(i).setSelected(false);
 		}
 	}
 	

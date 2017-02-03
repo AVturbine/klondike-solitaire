@@ -33,6 +33,7 @@ public class RegularPile extends Pile {
 		int originalY = y;
 		int originalX = x;
 		if (empty()) {
+			if(highlight) g.setColor(new Color(255, 255, 0));
 			g.setColor(new Color(200, 200, 200));
 			g.drawRect(x, y, 73, 97);
 		}
